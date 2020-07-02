@@ -6,6 +6,9 @@ const generateSourceMap = process.env.OMIT_SOURCEMAP === 'true' ? false : true;
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 
+const sassRegex = /\.(scss|sass)$/;
+const sassModuleRegex = /\.module\.(scss|sass)$/;
+
 const isProd = process.env.NODE_ENV === 'production';
 
 const cssModuleOptions = isProd
@@ -33,6 +36,78 @@ const babelLoader = {
         cacheCompression: process.env.NODE_ENV === 'production',
         compact: process.env.NODE_ENV === 'production',
     },
+};
+
+const sassModuleLoaderClient = {
+    test: sassModuleRegex,
+    use: [
+        require.resolve('css-hot-loader'),
+        MiniCssExtractPlugin.loader,
+        {
+            loader: require.resolve('css-loader'),
+            options: {
+                localsConvention: 'camelCase',
+                modules: cssModuleOptions,
+                importLoaders: 1,
+                sourceMap: generateSourceMap,
+            },
+        },
+        {
+            loader: require.resolve('postcss-loader'),
+            options: {
+                sourceMap: generateSourceMap,
+            },
+        },
+        require.resolve('sass-loader'),
+    ],
+};
+
+const sassLoaderClient = {
+    test: sassRegex,
+    exclude: sassModuleRegex,
+    use: [
+        require.resolve('css-hot-loader'),
+        MiniCssExtractPlugin.loader,
+        require.resolve('css-loader'),
+        {
+            loader: require.resolve('postcss-loader'),
+            options: {
+                sourceMap: generateSourceMap,
+            },
+        },
+        require.resolve('sass-loader'),
+    ],
+};
+
+const sassModuleLoaderServer = {
+    test: sassModuleRegex,
+    use: [
+        {
+            loader: require.resolve('css-loader'),
+            options: {
+                onlyLocals: true,
+                localsConvention: 'camelCase',
+                importLoaders: 1,
+                modules: cssModuleOptions,
+            },
+        },
+        {
+            loader: require.resolve('postcss-loader'),
+            options: {
+                sourceMap: generateSourceMap,
+            },
+        },
+        require.resolve('sass-loader'),
+    ],
+};
+const sassLoaderServer = {
+    test: sassRegex,
+    exclude: sassModuleRegex,
+    use: [
+        MiniCssExtractPlugin.loader,
+        require.resolve('css-loader'),
+        require.resolve('sass-loader'),
+    ],
 };
 
 const cssModuleLoaderClient = {
@@ -146,6 +221,8 @@ const fileLoaderServer = {
 export const client = [
     {
         oneOf: [
+            sassModuleLoaderClient,
+            // sassLoaderClient,
             babelLoader,
             cssModuleLoaderClient,
             cssLoaderClient,
@@ -158,6 +235,8 @@ export const client = [
 export const server = [
     {
         oneOf: [
+            sassModuleLoaderServer,
+            // sassLoaderServer,
             babelLoader,
             cssModuleLoaderServer,
             cssLoaderServer,

@@ -1,8 +1,9 @@
 // import React, { Suspense } from 'react';
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import favicon from '../shared/assets/favicon.png';
+import favicon from './assets/favicon.png';
 import Routes from './routes';
+import './app.css';
 
 const App: React.FC<any> = () => {
     return (

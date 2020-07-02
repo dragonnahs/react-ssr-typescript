@@ -1,3 +1,5 @@
+import any from '*.css';
+
 declare namespace NodeJS {
     interface ProcessEnv {
         NODE_ENV: 'development' | 'production' | 'test';
@@ -52,6 +54,11 @@ declare module '*.module.css' {
 
 declare module '*.css' {
     export default any;
+}
+
+declare module '*.module.scss' {
+    const css: { [key: string]: string };
+    export default css;
 }
 
 declare const __BROWSER__: boolean;
