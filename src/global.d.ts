@@ -56,6 +56,8 @@ declare module '*.css' {
 
 declare const __BROWSER__: boolean;
 declare const __SERVER__: boolean;
+declare module '@loadable/component';
+declare module 'js-cookie';
 
 interface Window {
     browserHistory: any;
